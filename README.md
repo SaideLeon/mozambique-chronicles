@@ -31,10 +31,10 @@ O Crônicas de Moçambique é uma aplicação web desenvolvida em React que ofer
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/cronicas-mocambique.git
+git clone https://github.com/SaideLeon/mozambique-chronicles.git
 
 # Entre no diretório
-cd cronicas-mocambique
+cd mozambique-chronicles
 
 # Instale as dependências
 npm install
@@ -132,7 +132,7 @@ yarn-error.log*
 ```text
 MIT License
 
-Copyright (c) 2024 [Seu Nome]
+Copyright (c) 2024 Saíde Omar Saíde
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -153,16 +153,3 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-Esta descrição:
-1. Fornece uma visão geral clara do projeto
-2. Lista todas as funcionalidades principais
-3. Inclui instruções detalhadas de instalação
-4. Explica como contribuir
-5. Inclui arquivos essenciais (.gitignore e LICENSE)
-6. Usa emojis para melhorar a legibilidade
-7. Segue as melhores práticas de documentação do GitHub
-
-Você gostaria que eu:
-1. Adicione mais seções específicas?
-2. Inclua exemplos de código?
-3. Modifique alguma parte da documentação?
