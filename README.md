@@ -70,9 +70,9 @@ mozambique-chronicles/
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## 👥 Autores
+## 👥 Autor
 
-* **[Seu Nome]** - *Trabalho Inicial* - [seu-usuario](https://github.com/seu-usuario)
+* **Saíde Omar Saíde** - *Trabalho Inicial* - [SaideLeon](https://github.com/SaideLeon)
 
 ## 🙏 Agradecimentos
 
@@ -81,7 +81,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 * Todos que compartilham suas histórias
 
 ---
-⌨️ com ❤️ por [seu-nome] 😊
+⌨️ com ❤️ por Saíde Omar Saíde😊
 ```
 
 ### Para o arquivo .gitignore:
