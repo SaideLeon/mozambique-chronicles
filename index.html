@@ -1,13 +1,137 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="pt">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    
+    <!-- Título e Descrição Principais -->
+    <title>Crônicas de Moçambique - Documentação Histórica da Eleição de 2024</title>
+    <meta name="description" content="Explore os eventos históricos das eleições de 2024 em Moçambique através de crônicas digitais detalhadas. Documentação autêntica sobre manifestações, protestos e acontecimentos políticos que moldaram o país." />
+    
+    <!-- Meta Tags Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cronicasmz.choreoapps.dev" />
+    <meta property="og:site_name" content="Crônicas de Moçambique" />
+    <meta property="og:title" content="Crônicas de Moçambique - História Eleitoral 2024" />
+    <meta property="og:description" content="Documentação histórica das eleições de 2024 em Moçambique: manifestações, protestos e eventos políticos que transformaram o país." />
+    <meta property="og:image" content="https://cronicasmz.choreoapps.dev/og-image.jpg" />
+    <meta property="og:locale" content="pt_PT" />
+    
+    <!-- Meta Tags Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://cronicasmz.choreoapps.dev" />
+    <meta name="twitter:title" content="Crônicas de Moçambique - Eleições 2024" />
+    <meta name="twitter:description" content="Registros históricos das eleições de 2024: protestos, manifestações e eventos políticos em Moçambique." />
+    <meta name="twitter:image" content="https://cronicasmz.choreoapps.dev/twitter-image.jpg" />
+    
+    <!-- Meta Tags Adicionais -->
+    <meta name="keywords" content="Moçambique, eleições 2024, protestos, manifestações, história política, Venâncio Mondlane, FRELIMO, PODEMOS, democracia moçambicana, documentação histórica" />
+    <meta name="author" content="Crônicas de Moçambique" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="news_keywords" content="Eleições Moçambique, Protestos 2024, Política Moçambicana" />
+    
+    <!-- Metadados Específicos para Conteúdo Histórico -->
+    <meta name="coverage" content="Moçambique, 2024" />
+    <meta name="date" content="2024-10-24" />
+    <meta name="lastmod" content="2024-10-24" />
+    <meta name="dcterms.subject" content="História Política de Moçambique" />
+    <meta name="dcterms.coverage" content="Moçambique, 2024" />
+    <meta name="dcterms.type" content="Texto" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://cronicasmz.choreoapps.dev" />
+    
+    <!-- Preconnect para Recursos Externos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- Cor do Tema -->
+    <meta name="theme-color" content="#1f2937" />
+    
+    <!-- Estrutura de Dados Schema.org Aprimorada -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Crônicas de Moçambique",
+      "url": "https://cronicasmz.choreoapps.dev",
+      "description": "Plataforma digital de documentação histórica das eleições de 2024 em Moçambique",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Crônicas de Moçambique",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://cronicasmz.choreoapps.dev/logo.png"
+        }
+      },
+      "mainEntity": {
+        "@type": "Collection",
+        "name": "Crônicas das Eleições 2024",
+        "about": {
+          "@type": "Event",
+          "name": "Eleições Gerais de Moçambique 2024",
+          "startDate": "2024-10-09",
+          "endDate": "2024-10-24",
+          "location": {
+            "@type": "Country",
+            "name": "Moçambique"
+          }
+        },
+        "hasPart": [
+          {
+            "@type": "Article",
+            "name": "O Anúncio das Sombras",
+            "datePublished": "2024-10-09",
+            "articleSection": "Política"
+          },
+          {
+            "@type": "Article",
+            "name": "A Noite dos Renegados",
+            "datePublished": "2024-10-19",
+            "articleSection": "Violência"
+          },
+          {
+            "@type": "Article",
+            "name": "A Ascensão dos Desesperados",
+            "datePublished": "2024-10-21",
+            "articleSection": "Protesto"
+          }
+        ]
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Início",
+            "item": "https://cronicasmz.choreoapps.dev"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Crônicas 2024",
+            "item": "https://cronicasmz.choreoapps.dev/cronicas-2024"
+          }
+        ]
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Fallback para NoScript -->
+    <noscript>
+
+    </noscript>
   </body>
 </html>
