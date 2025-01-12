@@ -2,7 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import MozambiqueChronicles from './components/MozambiqueChronicles';
 import { Login as LoginPage, Register as RegisterPage } from './components/Auth/Login'; // Corrigido o import
-import { Dashboard, ProtectedRoute } from './components/Dashboard';
+import { ProtectedRoute } from './contexts/ProtectedRoute';
+
+import { Dashboard } from './components/Dashboard';
 
 import { AuthProvider } from './contexts/AuthContext';
 
