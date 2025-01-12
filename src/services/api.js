@@ -188,61 +188,125 @@ export const featuredChronicleService = {
     },
 };
 
-// Visitor service
-export const visitorService = {
-    register: async (userData) => {
+
+export const visitorService = {register: async (userData) => {
         try {
-            const response = await api.post('/visitors/register/', userData);
-            return response.data;
+            // Log the incoming data
+            console.log('Registration Data:', userData);
+
+            // Ensure the data structure matches exactly what the Django serializer expects
+            const formattedData = {
+                email: userData.email,
+                name: userData.name,
+                password: userData.password,
+                password_confirm: userData.password_confirm
+            };
+
+            console.log('Formatted Data:', formattedData);
+
+            const response = await api.post('/register/', formattedData);
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
-            throw handleError(error);
+            console.error('Registration Error:', error.response?.data);
+            
+            // Handle different types of error responses
+            if (error.response?.data) {
+                // If we have field-specific errors
+                const fieldErrors = Object.entries(error.response.data)
+                    .map(([field, errors]) => {
+                        if (Array.isArray(errors)) {
+                            return `${field}: ${errors[0]}`;
+                        }
+                        return `${field}: ${errors}`;
+                    })
+                    .join(', ');
+                
+                throw new Error(fieldErrors || 'Erro na validação dos dados');
+            }
+            
+            throw new Error(error.message || 'Erro ao criar conta');
         }
     },
+    
 
-    login: async (credentials) => {
+    login: async ({ email, password }) => {
         try {
-            const response = await api.post('/visitors/login/', credentials);
+            const response = await api.post('/login/', { email, password });
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
+                // Store user data if available
+                if (response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
             }
-            return response.data;
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
-            throw handleError(error);
+            const errorMessage = error.response?.data?.message 
+                || error.response?.data?.detail 
+                || error.response?.data?.non_field_errors?.[0]
+                || error.message;
+            throw new Error(errorMessage);
         }
     },
 
     logout: () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
     },
 
     verifyEmail: async (token) => {
         try {
-            const response = await api.get(`/visitors/verify-email/?token=${token}`);
-            return response.data;
+            const response = await api.get(`/verify-email/?token=${token}`);
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
-            throw handleError(error);
+            const errorMessage = error.response?.data?.message 
+                || error.response?.data?.error 
+                || error.message;
+            throw new Error(errorMessage);
         }
     },
 
     getProfile: async () => {
         try {
-            const response = await api.get('/visitors/profile/');
-            return response.data;
+            const response = await api.get('/profile/');
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
-            throw handleError(error);
+            const errorMessage = error.response?.data?.message 
+                || error.response?.data?.detail 
+                || error.message;
+            throw new Error(errorMessage);
         }
     },
 
     updateProfile: async (profileData) => {
         try {
-            const response = await api.put('/visitors/profile/', profileData);
-            return response.data;
+            const response = await api.put('/profile/', profileData);
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
-            throw handleError(error);
+            const errorMessage = error.response?.data?.message 
+                || error.response?.data?.detail 
+                || Object.values(error.response?.data || {})[0]?.[0]
+                || error.message;
+            throw new Error(errorMessage);
         }
-    },
+    }
 };
-
+// 
 // Media helper
 export const mediaHelper = {
     getMediaUrl: (path) => {
