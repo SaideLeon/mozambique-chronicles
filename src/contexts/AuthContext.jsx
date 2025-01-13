@@ -56,12 +56,14 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Resposta inválida do servidor');
       }
 
-      const { token, ...userData } = response.data;
+      const { token, user: userData } = response.data;
 
       saveToken(token);
       saveUserData({
+        id: userData.id,
         email: userData.email,
         name: userData.name,
+        is_superuser: userData.is_superuser
       });
       
       return { success: true };
@@ -136,7 +138,8 @@ export const AuthProvider = ({ children }) => {
       const updatedUserData = {
         ...user,
         name: response.data.name,
-        email: response.data.email
+        email: response.data.email,
+        is_superuser: response.data.is_superuser
       };
 
       saveUserData(updatedUserData);
@@ -161,7 +164,8 @@ export const AuthProvider = ({ children }) => {
 
       const profileData = {
         ...user,
-        ...response.data
+        ...response.data,
+        is_superuser: response.data.is_superuser
       };
 
       saveUserData(profileData);
@@ -198,6 +202,10 @@ export const AuthProvider = ({ children }) => {
     }
   }, [visitors]);
 
+  const isSuperUser = useCallback(() => {
+    return user?.is_superuser || false;
+  }, [user]);
+
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
@@ -224,6 +232,7 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     getProfile,
     verifyEmail,
+    isSuperUser,
     isAuthenticated: !!user
   };
 

@@ -1,4 +1,3 @@
-
 // api.js
 import axios from 'axios';
 import { config } from './config';
@@ -26,7 +25,7 @@ const createAPIInstance = () => {
         (config) => {
             const token = localStorage.getItem('token');
             if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
+                config.headers.Authorization = `Token ${token}`;
             }
             return config;
         },
@@ -188,13 +187,12 @@ export const featuredChronicleService = {
     },
 };
 
-
-export const visitorService = {register: async (userData) => {
+// Visitor service
+export const visitorService = {
+    register: async (userData) => {
         try {
-            // Log the incoming data
             console.log('Registration Data:', userData);
 
-            // Ensure the data structure matches exactly what the Django serializer expects
             const formattedData = {
                 email: userData.email,
                 name: userData.name,
@@ -212,9 +210,7 @@ export const visitorService = {register: async (userData) => {
         } catch (error) {
             console.error('Registration Error:', error.response?.data);
             
-            // Handle different types of error responses
             if (error.response?.data) {
-                // If we have field-specific errors
                 const fieldErrors = Object.entries(error.response.data)
                     .map(([field, errors]) => {
                         if (Array.isArray(errors)) {
@@ -230,16 +226,23 @@ export const visitorService = {register: async (userData) => {
             throw new Error(error.message || 'Erro ao criar conta');
         }
     },
-    
 
     login: async ({ email, password }) => {
         try {
             const response = await api.post('/login/', { email, password });
             if (response.data.token) {
+                // Armazena o token
                 localStorage.setItem('token', response.data.token);
-                // Store user data if available
+                
+                // Armazena os dados do usuário
                 if (response.data.user) {
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                    const userData = {
+                        id: response.data.user.id,
+                        email: response.data.user.email,
+                        name: response.data.user.name,
+                        is_superuser: response.data.user.is_superuser
+                    };
+                    localStorage.setItem('user', JSON.stringify(userData));
                 }
             }
             return {
@@ -256,8 +259,32 @@ export const visitorService = {register: async (userData) => {
     },
 
     logout: () => {
+        // Remove todos os dados do usuário do localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+    },
+
+    getCurrentUser: () => {
+        // Função auxiliar para obter os dados do usuário atual
+        const userStr = localStorage.getItem('user');
+        if (!userStr) return null;
+        try {
+            return JSON.parse(userStr);
+        } catch (error) {
+            console.error('Erro ao parsear dados do usuário:', error);
+            return null;
+        }
+    },
+
+    isLoggedIn: () => {
+        // Função auxiliar para verificar se o usuário está logado
+        return !!localStorage.getItem('token');
+    },
+
+    isSuperUser: () => {
+        // Função auxiliar para verificar se o usuário é superusuário
+        const user = visitorService.getCurrentUser();
+        return user ? user.is_superuser : false;
     },
 
     verifyEmail: async (token) => {
@@ -278,6 +305,10 @@ export const visitorService = {register: async (userData) => {
     getProfile: async () => {
         try {
             const response = await api.get('/profile/');
+            // Atualiza os dados do usuário no localStorage quando obtém o perfil
+            if (response.data) {
+                localStorage.setItem('user', JSON.stringify(response.data));
+            }
             return {
                 success: true,
                 data: response.data
@@ -293,6 +324,10 @@ export const visitorService = {register: async (userData) => {
     updateProfile: async (profileData) => {
         try {
             const response = await api.put('/profile/', profileData);
+            // Atualiza os dados do usuário no localStorage após atualizar o perfil
+            if (response.data) {
+                localStorage.setItem('user', JSON.stringify(response.data));
+            }
             return {
                 success: true,
                 data: response.data
@@ -306,7 +341,7 @@ export const visitorService = {register: async (userData) => {
         }
     }
 };
-// 
+
 // Media helper
 export const mediaHelper = {
     getMediaUrl: (path) => {
