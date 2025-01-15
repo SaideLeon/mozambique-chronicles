@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { PlusCircle, Loader2, FileText, Trash2, PenSquare, UserCircle, LogOut } from 'lucide-react';
+import { PlusCircle, Loader2, FileText, Trash2, PenSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAPI } from '../services/api';
 import ChronicleCard from './ChronicleCard';
+import {ErrorMessage} from './ErrorMessage';
+import Navbar from './HeaderX';
 
 export const Dashboard = () => {
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chronicles, setChronicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,8 +20,7 @@ export const Dashboard = () => {
     pdf_file: null
   });
 
-  const { user, logout, isSuperUser } = useAuth();
-  const navigate = useNavigate();
+  const { isSuperUser } = useAuth();
   const { chronicles: chronicleService } = useAPI();
 
   useEffect(() => {
@@ -35,11 +36,6 @@ export const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
   };
 
   const handleFileChange = (e) => {
@@ -132,35 +128,13 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-purple-900">
-      {/* Header */}
-      <header className="backdrop-blur-md bg-black/30 border-b border-white/10 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-            Dashboard
-          </h1>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-white">
-              <UserCircle className="w-5 h-5 text-purple-400" />
-              <span>{user?.name}</span>
-              {isSuperUser() && (
-                <span className="text-xs bg-purple-500 text-white px-2 py-1 rounded-full">
-                  Admin
-                </span>
-              )}
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              Sair
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto p-6">
+    <div className="min-h-screen overflow-hidden bg-gradient-to-br from-black via-gray-900 to-purple-900">
+    	 <Navbar 
+          isMenuOpen={isMenuOpen} 
+          setIsMenuOpen={setIsMenuOpen} 
+          className="backdrop-blur-md bg-black/30 border-b border-white/5"
+        />
+      <div className="container mx-auto pt-16">
         {/* Form Section - Only visible to super users */}
         {isSuperUser() && (
           <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-6 mb-8">
@@ -249,9 +223,7 @@ export const Dashboard = () => {
 
         {/* Error Message Display */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-2 rounded-lg mb-4">
-            {error}
-          </div>
+        <ErrorMessage error={error}/>
         )}
 
         {/* Chronicles List */}
@@ -327,6 +299,9 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+    	
+
+      
     </div>
   );
 };
