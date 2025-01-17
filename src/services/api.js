@@ -187,17 +187,18 @@ export const featuredChronicleService = {
     },
 };
 // Social Service
-
 export const socialService = {
     // Comentários
-    getComments: async (params = {}) => {
+   getComments: async (chronicleId) => {
         try {
-            const response = await api.get('/comments/', { params });
+            const response = await api.get('/comments/', { params: { chronicle: chronicleId } });
             return response.data;
         } catch (error) {
             throw handleError(error);
         }
     },
+
+    
 
     createComment: async (commentData) => {
         try {
@@ -227,9 +228,9 @@ export const socialService = {
     },
 
     // Likes
-    getLikes: async (params = {}) => {
+    getLikes: async (chronicleId) => {
         try {
-            const response = await api.get('/likes/', { params });
+            const response = await api.get('/likes/', { params: { chronicle: chronicleId } });
             return response.data;
         } catch (error) {
             throw handleError(error);
@@ -324,13 +325,12 @@ export const socialService = {
         
         return {
             facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-            twitter: `https://twitter.com/intent/tweet?url=${url}`,
+twitter: `https://twitter.com/intent/tweet?url=${url}`,
             whatsapp: `https://api.whatsapp.com/send?text=${url}`,
             telegram: `https://t.me/share/url?url=${url}`
         };
     }
 };
-
 
 // Visitor service
 export const visitorService = {

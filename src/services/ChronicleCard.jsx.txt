@@ -1,0 +1,176 @@
+import React, { useState } from 'react';
+import { Calendar, ChevronDown, ChevronRight, ExternalLink, FileDown } from 'lucide-react';
+import { useAPI } from '../services/api';
+import SocialInteractions from './SocialInteractions';
+
+const cn = (...classes) => {
+  return classes.filter(Boolean).join(' ');
+};
+
+const ChronicleCard = ({ 
+  id,
+  date, 
+  title, 
+  content, 
+  pdfUrl,
+  isFeatured = false,
+  isDetail = false,
+  className
+}) => {
+  const [isExpanded, setIsExpanded] = useState(isDetail);
+  const { media } = useAPI();
+
+  const toggleExpand = () => {
+    if (!isDetail) {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
+  return (
+    <div className={cn(
+      "rounded-lg backdrop-blur-sm border transition-all duration-300",
+      isDetail 
+        ? "bg-white/10 border-purple-500/30 shadow-lg shadow-purple-500/10" 
+        : "bg-white/5 border-white/10 hover:bg-white/10",
+      isExpanded && !isDetail && "bg-white/10",
+      isDetail ? "h-[calc(100vh-8rem)]" : "min-h-[200px]",
+      "flex flex-col",
+      className
+    )}>
+      {/* Header - Fixed */}
+      <div className={cn(
+        "flex flex-row items-center justify-between shrink-0",
+        isDetail ? "p-8 pb-4" : "p-6 pb-2"
+      )}>
+        <div className="flex items-center gap-2">
+          <Calendar className={cn(
+            "text-purple-400",
+            isDetail ? "w-6 h-6" : "w-5 h-5"
+          )} />
+          <span className={cn(
+            "font-medium text-purple-400",
+            isDetail ? "text-base" : "text-sm"
+          )}>{date}</span>
+        </div>
+        {pdfUrl && (
+          <button
+            className={cn(
+              "inline-flex items-center px-3 py-1.5 text-purple-400 hover:text-purple-300 hover:bg-purple-400/10 rounded-md transition-colors",
+              isDetail ? "text-base" : "text-sm"
+            )}
+            onClick={() => window.open(media.getMediaUrl(pdfUrl), '_blank')}
+          >
+            <FileDown className={cn(
+              "mr-2",
+              isDetail ? "w-6 h-6" : "w-5 h-5"
+            )} />
+            <span>PDF</span>
+          </button>
+        )}
+      </div>
+
+      {/* Title - Fixed */}
+      <div className={cn(
+        "shrink-0",
+        isDetail ? "px-8" : "px-6"
+      )}>
+        <h3 className={cn(
+          "font-bold text-white",
+          isDetail ? "text-2xl" : "text-xl"
+        )}>{title}</h3>
+      </div>
+
+      {/* Content - Scrollable */}
+      <div className={cn(
+        "flex-1 overflow-hidden",
+        isDetail ? "px-8" : "px-6",
+        "mt-4"
+      )}>
+        <div className={cn(
+          "h-full relative",
+          (isExpanded || isDetail) && "overflow-hidden"
+        )}>
+          <div 
+            className={cn(
+              "transition-all duration-300 h-full",
+              !isExpanded && !isDetail && "max-h-32"
+            )}
+          >
+            <div className={cn(
+              "prose prose-invert max-w-none h-full",
+              !isExpanded && !isDetail && "line-clamp-3",
+              (isExpanded || isDetail) && "overflow-y-auto pr-4 scrollbar-thin scrollbar-track-white/5 scrollbar-thumb-purple-400/20 hover:scrollbar-thumb-purple-400/30",
+              isDetail && "prose-lg"
+            )}>
+              {content}
+            </div>
+          </div>
+          
+          {!isExpanded && !isDetail && content.length > 200 && (
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0f1729]/90 to-transparent pointer-events-none" />
+          )}
+        </div>
+      </div>
+
+      {/* Action Buttons - Fixed */}
+      <div className={cn(
+        "shrink-0",
+        isDetail ? "px-8" : "px-6",
+        "mt-4"
+      )}>
+        <div className={cn(
+          "flex items-center justify-between",
+          isDetail ? "pt-4" : "pt-2"
+        )}>
+          {!isDetail && (
+            <button
+              onClick={toggleExpand}
+              className="inline-flex items-center px-3 py-1.5 text-sm text-purple-400 hover:text-purple-300 hover:bg-purple-400/10 rounded-md transition-colors"
+            >
+              {isExpanded ? (
+                <>
+                  Ler menos
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                </>
+              ) : (
+                <>
+                  Ler mais
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </>
+              )}
+            </button>
+          )}
+
+          {pdfUrl && (isExpanded || isDetail) && (
+            <button
+              className={cn(
+                "inline-flex items-center px-3 py-1.5 text-purple-400 hover:text-purple-300 hover:bg-purple-400/10 rounded-md transition-colors",
+                isDetail ? "text-base ml-auto" : "text-sm"
+              )}
+              onClick={() => window.open(media.getMediaUrl(pdfUrl), '_blank')}
+            >
+              <span className="mr-2">Versão completa</span>
+              <ExternalLink className={cn(
+                isDetail ? "w-5 h-5" : "w-4 h-4"
+              )} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Footer with Social Interactions - Fixed */}
+      <div className={cn(
+        "shrink-0",
+        isDetail ? "px-8 pb-8" : "px-6 pb-6",
+        "mt-4"
+      )}>
+        <SocialInteractions 
+          chronicleId={id}
+          isFeatured={isFeatured}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default ChronicleCard;
