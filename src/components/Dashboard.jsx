@@ -293,6 +293,7 @@ export const Dashboard = () => {
                           title={chronicle.title}
                           content={chronicle.content}
                           pdfUrl={chronicle.pdf_url}
+                 dashboard={true}
                         />
                       </div>
                     )}

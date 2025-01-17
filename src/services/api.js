@@ -282,10 +282,17 @@ export const socialService = {
                 : { chronicle: chronicleId };
             
             const response = await api.get('/likes/', { params });
+            const likes = response.data;
+            
+            const currentUser = visitorService.getCurrentUser();
+            const userLike = currentUser ? 
+                likes.find(like => like.owner === currentUser.id || like.user === currentUser.id) : 
+                null;
+
             return {
-                isLiked: response.data.length > 0,
-                likeId: response.data[0]?.id,
-                totalLikes: response.data.length
+                isLiked: !!userLike,
+                likeId: userLike?.id,
+                totalLikes: likes.length
             };
         } catch (error) {
             throw handleError(error);
@@ -298,25 +305,48 @@ export const socialService = {
                 ? { featured_chronicle: chronicleId }
                 : { chronicle: chronicleId };
             
+            // Fazer todas as chamadas em paralelo para melhor performance
             const [comments, likes, shares] = await Promise.all([
                 api.get('/comments/', { params }),
                 api.get('/likes/', { params }),
                 api.get('/shares/', { params })
             ]);
 
+            const currentUser = visitorService.getCurrentUser();
+            const userLike = currentUser ? 
+                likes.data.find(like => like.owner === currentUser.id || like.user === currentUser.id) : 
+                null;
+
             return {
                 commentsCount: comments.data.length,
                 likesCount: likes.data.length,
                 sharesCount: shares.data.length,
                 comments: comments.data,
-                isLiked: likes.data.length > 0,
-                likeId: likes.data[0]?.id
+                isLiked: !!userLike,
+                likeId: userLike?.id
             };
         } catch (error) {
             throw handleError(error);
         }
     },
 
+    like: async (data) => {
+        try {
+            const response = await api.post('/likes/', data);
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    unlike: async (likeId) => {
+        try {
+            await api.delete(`/likes/${likeId}/`);
+            return true;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
     // Método para obter URLs de compartilhamento
     getShareUrls: (chronicleId, isFeatured = false) => {
         const baseUrl = window.location.origin;

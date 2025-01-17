@@ -71,7 +71,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
             to="/"
             className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
           >
-            Crônicas
+            StoryByte
           </Link>
 
           {/* Desktop Menu */}

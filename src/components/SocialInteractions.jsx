@@ -39,8 +39,8 @@ const CommentForm = ({ onSubmit, isLoading }) => {
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="Escreva um comentário..."
-        className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder:text-gray-500
-          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder:text-gray-500 w-10
+          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent right-12"
       />
       <button
         type="submit"
@@ -76,7 +76,7 @@ const CommentList = ({ comments }) => (
   </div>
 );
 
-const SocialInteractions = ({ chronicleId, isFeatured = false }) => {
+const SocialInteractions = ({ chronicleId, isFeatured = true }) => {
   const [socialStats, setSocialStats] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -121,29 +121,33 @@ const SocialInteractions = ({ chronicleId, isFeatured = false }) => {
       setIsLoading(false);
     }
   };
-
-  const handleLike = async () => {
+ const handleLike = async () => {
     if (isLoading) return;
     
     try {
-      setIsLoading(true);
-      setError(null);
-      if (socialStats.isLiked) {
-        await social.unlike(socialStats.likeId);
-      } else {
-        await social.like({
-          chronicle: isFeatured ? null : chronicleId,
-          featured_chronicle: isFeatured ? chronicleId : null
-        });
-      }
-      await fetchSocialStats();
+        setIsLoading(true);
+        setError(null);
+        
+        if (socialStats.isLiked) {
+            await social.unlike(socialStats.likeId);
+        } else {
+            const likeData = {
+                chronicle: isFeatured ? null : chronicleId,
+                featured_chronicle: isFeatured ? chronicleId : null
+            };
+            await social.like(likeData);
+        }
+        
+        // Atualiza os stats após o like/unlike
+        await fetchSocialStats();
     } catch (err) {
-      setError('Erro ao processar like');
-      console.error('Error handling like:', err);
+        setError('Erro ao processar like');
+        console.error('Error handling like:', err);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
+  
 
   const handleShare = async (platform) => {
     try {

@@ -14,7 +14,8 @@ const ChronicleCard = ({
   pdfUrl,
   isFeatured = false,
   isDetail = false,
-  className
+  className,
+  dashboard=false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(isDetail);
   const handwritingStyle = {
@@ -71,51 +72,6 @@ const ChronicleCard = ({
           </button>
         )}
       </div>
-      {/*<div className="bg-sky-200">
-      	
-
-      {/* Title 
-      <div className={cn(
-        "shrink-0",
-        isDetail ? "px-8" : "px-6"
-      )}>
-        <h3 className={cn(
-          "font-bold tracking-tight text-white",
-          isDetail ? "text-2xl" : "text-xl",
-          "leading-tight"
-        )}>{title}</h3>
-      </div>
-
-      {/* Content 
-      <div className={cn(
-        "flex-1 overflow-hidden",
-        isDetail ? "px-8" : "px-6",
-        "mt-4"
-      )}>
-        <div className={cn(
-          "h-full relative",
-          (isExpanded || isDetail) && "overflow-hidden"
-        )}>
-          <div className="transition-all duration-300 h-full">
-            <div className={cn(
-              "prose max-w-none h-full prose-invert",
-              !isExpanded && !isDetail && "line-clamp-3",
-              (isExpanded || isDetail) && "overflow-y-auto",
-              isDetail && "prose-lg",
-              "prose-p:leading-relaxed"
-            )}>
-              {content}
-            </div>
-          </div>
-          
-          {!isExpanded && !isDetail && content.length > 200 && (
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0f1729]/90 to-transparent pointer-events-none" />
-          )}
-        </div>
-      </div>
-            	
-      </div>
-      */}
       
       {/* Notebook */}
       <div className="w-full max-w-2xl mx-auto">
@@ -243,10 +199,15 @@ const ChronicleCard = ({
 
       {/* Footer */}
       <div className="shrink-0 px-6 pb-6 mt-4">
-        <SocialInteractions 
+      	{
+      		dashboard?(
+      		<SocialInteractions 
           chronicleId={id}
           isFeatured={isFeatured}
         />
+      		):(<></>)
+      	}
+        
       </div>
     </div>
   );
