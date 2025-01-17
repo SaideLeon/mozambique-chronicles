@@ -22,6 +22,7 @@ export const Dashboard = () => {
 
   const { isSuperUser } = useAuth();
   const { chronicles: chronicleService } = useAPI();
+  
 
   useEffect(() => {
     fetchChronicles();
@@ -44,6 +45,8 @@ export const Dashboard = () => {
       pdf_file: e.target.files[0]
     }));
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -286,6 +289,7 @@ export const Dashboard = () => {
                             month: 'long',
                             year: 'numeric'
                           })}
+                          id={chronicle.id}
                           title={chronicle.title}
                           content={chronicle.content}
                           pdfUrl={chronicle.pdf_url}

@@ -186,6 +186,151 @@ export const featuredChronicleService = {
         }
     },
 };
+// Social Service
+
+export const socialService = {
+    // Comentários
+    getComments: async (params = {}) => {
+        try {
+            const response = await api.get('/comments/', { params });
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    createComment: async (commentData) => {
+        try {
+            const response = await api.post('/comments/', commentData);
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    updateComment: async (commentId, commentData) => {
+        try {
+            const response = await api.patch(`/comments/${commentId}/`, commentData);
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    deleteComment: async (commentId) => {
+        try {
+            await api.delete(`/comments/${commentId}/`);
+            return true;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    // Likes
+    getLikes: async (params = {}) => {
+        try {
+            const response = await api.get('/likes/', { params });
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    like: async (data) => {
+        try {
+            const response = await api.post('/likes/', data);
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    unlike: async (likeId) => {
+        try {
+            await api.delete(`/likes/${likeId}/`);
+            return true;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    // Compartilhamentos
+    getShares: async (params = {}) => {
+        try {
+            const response = await api.get('/shares/', { params });
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    share: async (shareData) => {
+        try {
+            const response = await api.post('/shares/', shareData);
+            return response.data;
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    // Métodos auxiliares para verificar status
+    getLikeStatus: async (chronicleId, isFeatured = false) => {
+        try {
+            const params = isFeatured 
+                ? { featured_chronicle: chronicleId }
+                : { chronicle: chronicleId };
+            
+            const response = await api.get('/likes/', { params });
+            return {
+                isLiked: response.data.length > 0,
+                likeId: response.data[0]?.id,
+                totalLikes: response.data.length
+            };
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    getChronicleStats: async (chronicleId, isFeatured = false) => {
+        try {
+            const params = isFeatured 
+                ? { featured_chronicle: chronicleId }
+                : { chronicle: chronicleId };
+            
+            const [comments, likes, shares] = await Promise.all([
+                api.get('/comments/', { params }),
+                api.get('/likes/', { params }),
+                api.get('/shares/', { params })
+            ]);
+
+            return {
+                commentsCount: comments.data.length,
+                likesCount: likes.data.length,
+                sharesCount: shares.data.length,
+                comments: comments.data,
+                isLiked: likes.data.length > 0,
+                likeId: likes.data[0]?.id
+            };
+        } catch (error) {
+            throw handleError(error);
+        }
+    },
+
+    // Método para obter URLs de compartilhamento
+    getShareUrls: (chronicleId, isFeatured = false) => {
+        const baseUrl = window.location.origin;
+        const path = isFeatured ? 'featured-chronicles' : 'chronicles';
+        const url = encodeURIComponent(`${baseUrl}/${path}/${chronicleId}`);
+        
+        return {
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+            twitter: `https://twitter.com/intent/tweet?url=${url}`,
+            whatsapp: `https://api.whatsapp.com/send?text=${url}`,
+            telegram: `https://t.me/share/url?url=${url}`
+        };
+    }
+};
+
 
 // Visitor service
 export const visitorService = {
@@ -357,7 +502,8 @@ export const useAPI = () => {
         chronicles: chronicleService,
         featuredChronicles: featuredChronicleService,
         visitors: visitorService,
-        media: mediaHelper
+        media: mediaHelper,
+        social: socialService,
     };
 };
 
