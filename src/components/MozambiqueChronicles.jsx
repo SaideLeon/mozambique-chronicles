@@ -120,7 +120,7 @@ const MozambiqueChronicles = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-black via-gray-900 to-purple-900">
-      <BackgroundDecorations />
+
       
       <div className="relative z-10">
         <Navbar 

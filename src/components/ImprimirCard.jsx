@@ -59,9 +59,9 @@ const ImprimirCard = ({
           </div>
 
           {/* Content */}
-          <div className="px-3 mt-4 flex-1 ml-1.5">
+          <div className="px-3 mt-4 flex-1">
             <div className="h-full overflow-y-auto">
-              <div className="text-4xl leading-relaxed"
+              <div className="text-4xl leading-relaxed ml-3"
                    style={{
                      ...handwritingStyle,
                      color: '#0066cc',

@@ -90,7 +90,7 @@ const ChronicleCard = ({
            }}>
         
         {/* Linha vermelha da margem */}
-        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-red-200" />
+        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-red-200 " />
         
         {/* Title */}
         <div className={cn(
@@ -98,8 +98,8 @@ const ChronicleCard = ({
           isDetail ? "px-12" : "px-10"
         )}>
           <h3 className={cn(
-            "tracking-tight pt-4",
-            isDetail ? "text-2xl" : "text-xl",
+            "tracking-tight  pt-4",
+            isDetail ? "text-9xl" : "text-9x1",
             "leading-tight"
           )}
           style={{
@@ -112,7 +112,7 @@ const ChronicleCard = ({
 
         {/* Content */}
         <div className={cn(
-          "flex-1 overflow-hidden",
+          "flex-1 text- overflow-hidden",
           isDetail ? "px-22" : "px-10",
           "mt-4"
         )}>
@@ -122,10 +122,10 @@ const ChronicleCard = ({
           )}>
             <div className="transition-all duration-300 h-full">
               <div className={cn(
-                "max-w-none h-full",
+                "max-w-none h-full text-9x1",
                 !isExpanded && !isDetail && "line-clamp-3",
                 (isExpanded || isDetail) && "overflow-y-auto",
-                isDetail && "text-lg",
+                isDetail && "text-9x1",
                 "leading-relaxed"
               )}
               style={{

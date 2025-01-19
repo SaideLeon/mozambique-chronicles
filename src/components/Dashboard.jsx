@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Loader2, FileText, Trash2, PenSquare } from 'lucide-react';
+import { PlusCircle, Loader2, FileText, Trash2, PenSquare, Eye } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useAPI } from '../services/api';
 import ChronicleCard from './ChronicleCard';
 import {ErrorMessage} from './ErrorMessage';
 import Navbar from './HeaderX';
+import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
+	const navigate = useNavigate();
+
+  const handleViewChronicle = (id) => {
+    navigate(`/chronicles/${id}`);
+  };
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [chronicles, setChronicles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -232,76 +238,83 @@ export const Dashboard = () => {
         {/* Chronicles List */}
         <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl p-6">
           <h2 className="text-xl font-semibold text-white mb-6">Crônicas Publicadas</h2>
-          <div className="space-y-4">
-            {chronicles.map((chronicle) => (
-              <div key={chronicle.id}>
-                {isSuperUser() ? (
-                  <div
-                    className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between group hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <h3 className="text-lg font-medium text-white">{chronicle.title}</h3>
-                      <p className="text-gray-400 text-sm">
-                        {new Date(chronicle.date).toLocaleDateString('pt-BR', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={() => handleEdit(chronicle)}
-                        className="p-2 text-purple-400 hover:text-purple-300 transition-colors"
-                      >
-                        <PenSquare className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(chronicle.id)}
-                        className="p-2 text-red-400 hover:text-red-300 transition-colors"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div
-                      onClick={() => handleChronicleClick(chronicle)}
-                      className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-colors"
-                    >
-                      <div className="flex-1">
-                        <h3 className="text-lg font-medium text-white">{chronicle.title}</h3>
-                        <p className="text-gray-400 text-sm">
-                          {new Date(chronicle.date).toLocaleDateString('pt-BR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                    {selectedChronicle?.id === chronicle.id && (
-                      <div className="mt-4">
-                        <ChronicleCard
-                          date={new Date(chronicle.date).toLocaleDateString('pt-BR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          })}
-                          id={chronicle.id}
-                          title={chronicle.title}
-                          content={chronicle.content}
-                          pdfUrl={chronicle.pdf_url}
-                 dashboard={true}
-                        />
-                      </div>
-                    )}
-                  </>
-                )}
+			<div className="space-y-4">
+      {chronicles.map((chronicle) => (
+        <div key={chronicle.id}>
+          {isSuperUser() ? (
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between group hover:bg-white/10 transition-colors">
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-white">{chronicle.title}</h3>
+                <p className="text-gray-400 text-sm">
+                  {new Date(chronicle.date).toLocaleDateString('pt-BR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </p>
               </div>
-            ))}
-          </div>
+              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => handleViewChronicle(chronicle.id)}
+                  className="p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                  aria-label="Visualizar crônica"
+                >
+                  <Eye className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleEdit(chronicle)}
+                  className="p-2 text-purple-400 hover:text-purple-300 transition-colors"
+                  aria-label="Editar crônica"
+                >
+                  <PenSquare className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleDelete(chronicle.id)}
+                  className="p-2 text-red-400 hover:text-red-300 transition-colors"
+                  aria-label="Excluir crônica"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                onClick={() => handleChronicleClick(chronicle)}
+                className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-colors"
+              >
+                <div className="flex-1">
+                  <h3 className="text-lg font-medium text-white">{chronicle.title}</h3>
+                  <p className="text-gray-400 text-sm">
+                    {new Date(chronicle.date).toLocaleDateString('pt-BR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
+              </div>
+              {selectedChronicle?.id === chronicle.id && (
+                <div className="mt-4">
+                  <ChronicleCard
+                    date={new Date(chronicle.date).toLocaleDateString('pt-BR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                    id={chronicle.id}
+                    title={chronicle.title}
+                    content={chronicle.content}
+                    pdfUrl={chronicle.pdf_url}
+                    dashboard={true}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ))}
+    </div>
         </div>
       </div>
     	

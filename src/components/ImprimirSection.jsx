@@ -10,20 +10,20 @@ const ImprimirSection = ({ chronicles }) => (
       
       {/* Adjusted grid for better layout with expanded cards */}
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8 max-w-full">
-        {chronicles.map((chronicle) => (
-          <ImprimirCard
-            key={chronicle.id}
-            id={chronicle.id}
-            date={new Date(chronicle.date).toLocaleDateString('pt-BR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-            title={chronicle.title}
-            content={chronicle.content}
-            pdfUrl={chronicle.pdf_file}
-          />
-        ))}
+		{[...chronicles].reverse().map((chronicle) => (
+		  <ImprimirCard
+		    key={chronicle.id}
+		    id={chronicle.id}
+		    date={new Date(chronicle.date).toLocaleDateString('pt-BR', {
+		      day: 'numeric',
+		      month: 'long',
+		      year: 'numeric',
+		    })}
+		    title={chronicle.title}
+		    content={chronicle.content}
+		    pdfUrl={chronicle.pdf_file}
+		  />
+		))}
       </div>
     </div>
   </section>

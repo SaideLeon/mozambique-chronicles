@@ -51,6 +51,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
           >
             Inicio
           </Link>
+        
           <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/10 transition-colors flex items-center gap-2"
@@ -140,6 +141,18 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
                 >
                   Inicio
                 </Link>
+                  {isSuperUser()?(
+                                  <Link
+                  to="/imprimir"
+                  className="block text-white hover:text-purple-400 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Imprimir
+                </Link>
+                  ):(<></>)
+                  	
+                  }       
+
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors"
