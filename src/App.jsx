@@ -11,13 +11,18 @@ import { ProtectedRoute } from './contexts/ProtectedRoute';
 import { Dashboard } from './components/Dashboard';
 
 import { AuthProvider } from './contexts/AuthContext';
-
+import ImageEditor from './pages/Editor';
+import PriceCalculator from './pages/Lucro';
 function App() {
   return (
     <AuthProvider>
       <Router> {/* Router deve envolver Routes */}
         <Routes>
           <Route path="/" element={<MozambiqueChronicles />} />
+          <Route path="/i" element={<ImageEditor />} />
+           <Route path="/l" element={<PriceCalculator/>} />
+
+
           <Route path="/chronicles/:id" element={<ChronicleDetail />} />
             <Route path="*" element={<NotFound />} />
          <Route path="/imprimir" element={<Imprimir />} />

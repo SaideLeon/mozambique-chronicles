@@ -1,0 +1,1049 @@
+ARQUIVOS DO PROJETO REACT
+================================================================================
+Diretório base: ./nostress
+========================================
+
+
+================================================================================
+ARQUIVOS .JS
+================================================================================
+
+================================================================================
+Arquivo: ./nostress/eslint.config.js
+================================================================================
+
+import js from '@eslint/js'
+import globals from 'globals'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+
+export default [
+  { ignores: ['dist'] },
+  {
+    files: ['**/*.{js,jsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    settings: { react: { version: '18.3' } },
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      ...react.configs.recommended.rules,
+      ...react.configs['jsx-runtime'].rules,
+      ...reactHooks.configs.recommended.rules,
+      'react/jsx-no-target-blank': 'off',
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+]
+
+
+================================================================================
+Arquivo: ./nostress/vite.config.js
+================================================================================
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+
+
+================================================================================
+Arquivo: ./nostress/postcss.config.js
+================================================================================
+
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+
+================================================================================
+Arquivo: ./nostress/tailwind.config.js
+================================================================================
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        }
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.5s ease-in-out',
+        slideUp: 'slideUp 0.5s ease-out forwards',
+        float: 'float 6s ease-in-out infinite',
+        'float-delayed': 'float 6s ease-in-out infinite 3s',
+      },
+    },
+  },
+
+  plugins: [],
+}
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/constants.js
+================================================================================
+
+// src/components/PriceCalculator/constants.js
+export const CURRENCY_CONFIG = {
+  BRL: { symbol: 'R$', name: 'Real Brasileiro', locale: 'pt-BR',pt: 'Exemplo: Aluguel' },
+  EUR: { symbol: '€', name: 'Euro (Portugal)', locale: 'pt-PT' ,pt: 'Exemplo: Aluguer'},
+  AOA: { symbol: 'Kz', name: 'Kwanza Angolano', locale: 'pt-AO' ,pt: 'Exemplo: Aluguer' },
+  CVE: { symbol: '$', name: 'Escudo Cabo-verdiano', locale: 'pt-CV' ,pt: 'Exemplo: Aluguer'},
+  MZN: { symbol: 'MT', name: 'Metical Moçambicano', locale: 'pt-MZ' ,pt: 'Exemplo: Aluguer'},
+  STN: { symbol: 'Db', name: 'Dobra São-tomense', locale: 'pt-ST'  ,pt: 'Exemplo: Aluguer'}
+};
+
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/utils.js
+================================================================================
+
+// src/components/PriceCalculator/utils.js
+import { CURRENCY_CONFIG } from './constants';
+
+export const formatCurrency = (value, currency) => {
+  if (!value || !currency || !CURRENCY_CONFIG[currency]) {
+    return '0.00'; // valor padrão em caso de erro
+  }
+
+  try {
+    return new Intl.NumberFormat(CURRENCY_CONFIG[currency].locale, {
+      style: 'currency',
+      currency: currency
+    }).format(value);
+  } catch (error) {
+    console.error('Error formatting currency:', error);
+    return '0.00';
+  }
+};
+
+
+================================================================================
+ARQUIVOS .JSX
+================================================================================
+
+================================================================================
+Arquivo: ./nostress/src/App.jsx
+================================================================================
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import NoStressLanding from './pages/Landing';
+import PriceCalculator from './components/PriceCalculator/index';
+import NotFound from './pages/NotFound';
+
+function App() {
+  return (
+      <Router> {/* Router deve envolver Routes */}
+        <Routes>
+          <Route path="/" element={<NoStressLanding />} />
+          <Route path="/recursos" element={<PriceCalculator />} />
+        <Route path="*" element={<NotFound />} />
+         
+          
+        </Routes>
+      </Router>
+  );
+}
+
+export default App;
+
+================================================================================
+Arquivo: ./nostress/src/main.jsx
+================================================================================
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+================================================================================
+Arquivo: ./nostress/src/components/Navbar.jsx
+================================================================================
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Calculator, Menu, X } from 'lucide-react';
+
+const MobileMenu = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="md:hidden absolute top-16 left-0 right-0 bg-black/95 border-b border-emerald-500/30 backdrop-blur-xl">
+      <div className="px-4 py-2">
+        {['Recursos', 'Preços', 'Sobre', 'Contato'].map((item) => (
+          <Link
+            key={item}
+            to={`/${item.toLowerCase()}`}
+            className="block py-3 text-gray-300 hover:text-emerald-400 transition-colors duration-300"
+            onClick={onClose}
+          >
+            {item}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/30">
+      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10" />
+      <div className="absolute inset-0 border-b border-emerald-500/30" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-3 group">
+            <Calculator className="h-8 w-8 text-emerald-400 transform group-hover:rotate-12 transition-transform duration-300" />
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-blue-400">
+              NoStress
+            </span>
+          </Link>
+
+          <div className="hidden md:flex items-center space-x-8">
+            {['Recursos', 'Preços', 'Sobre', 'Contato'].map((item) => (
+              <Link
+                key={item}
+                to={`/${item.toLowerCase()}`}
+                className="relative group py-2"
+              >
+                <span className="relative z-10 text-gray-300 group-hover:text-emerald-400 transition-colors duration-300">
+                  {item}
+                </span>
+                <div className="absolute bottom-0 left-1/2 w-0 h-px bg-emerald-400 group-hover:w-full group-hover:left-0 transition-all duration-300" />
+              </Link>
+            ))}
+          </div>
+
+          <button 
+            className="md:hidden p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6 text-emerald-400" />
+            ) : (
+              <Menu className="h-6 w-6 text-emerald-400" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+    </nav>
+  );
+};
+
+export default Navbar;
+
+================================================================================
+Arquivo: ./nostress/src/components/HeroSection.jsx
+================================================================================
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+
+const HeroSection = () => {
+  return (
+    <div className="relative pt-20">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/50 via-black to-blue-900/50" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_70%)]" />
+      </div>
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+        <div className="text-center">
+          <h1 className="text-6xl md:text-7xl font-bold mb-8 relative group">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-blue-400">
+              Precificação sem Estresse
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl text-emerald-200/80 mb-12 max-w-3xl mx-auto">
+            Calcule preços ideais, maximize lucros e tome decisões mais inteligentes para seu negócio
+          </p>
+          
+          <Link 
+            to="/recursos" 
+            className="relative group inline-block px-8 py-4 bg-transparent overflow-hidden rounded-lg"
+          >
+            <div className="absolute inset-0 border border-emerald-500 rounded-lg" />
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10 flex items-center space-x-2">
+              <span className="font-semibold text-white">
+                Começar Agora
+              </span>
+              <ArrowRight className="w-5 h-5" />
+            </div>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HeroSection;
+
+================================================================================
+Arquivo: ./nostress/src/components/FeatureSection.jsx
+================================================================================
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Calculator, DollarSign, BarChart2, ArrowRight } from 'lucide-react';
+
+const features = [
+  {
+    icon: Calculator,
+    title: 'Cálculo Preciso',
+    color: 'emerald',
+    description: 'Análise detalhada de custos e margens de lucro para decisões mais acertadas'
+  },
+  {
+    icon: DollarSign,
+    title: 'Multi-moeda',
+    color: 'blue',
+    description: 'Suporte para várias moedas dos países lusófonos, facilitando negócios internacionais'
+  },
+  {
+    icon: BarChart2,
+    title: 'Análise Visual',
+    color: 'purple',
+    description: 'Visualize suas margens e lucros com gráficos intuitivos e relatórios detalhados'
+  }
+];
+
+const FeatureSection = () => {
+  const [activeFeature, setActiveFeature] = React.useState(0);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveFeature((prev) => (prev + 1) % 3);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {features.map(({ icon: Icon, title, color, description }, index) => (
+          <div 
+            key={title} 
+            className={`group relative transform transition-all duration-500 ${
+              index === activeFeature ? 'scale-105' : 'scale-100'
+            }`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black rounded-xl" />
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-emerald-900/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 rounded-xl border border-gray-800 group-hover:border-emerald-500/50 transition-colors duration-500" />
+            
+            <div className="relative p-6 space-y-4">
+              <Icon className="h-12 w-12 text-emerald-400" />
+              <h3 className="text-xl font-semibold text-white">{title}</h3>
+              <p className="text-gray-400">{description}</p>
+              
+              <Link 
+                to="/index"
+                className="inline-flex items-center text-sm text-emerald-400 hover:text-emerald-300 transition-colors duration-300"
+              >
+                <span>Saiba mais</span>
+                <ArrowRight className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default FeatureSection;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/CurrencySelector.jsx
+================================================================================
+
+// src/components/PriceCalculator/CurrencySelector.jsx
+import React from 'react';
+import { CURRENCY_CONFIG } from './constants';
+
+const CurrencySelector = ({ selectedCurrency, onCurrencyChange }) => {
+  return (
+    <select
+      value={selectedCurrency}
+      onChange={(e) => onCurrencyChange(e.target.value)}
+      className="p-2 bg-white/5 border border-white/20 rounded-lg text-white backdrop-blur-sm"
+    >
+      {Object.entries(CURRENCY_CONFIG).map(([code, config]) => (
+        <option key={code} value={code} className="bg-blue-900 text-white">
+          {config.name} ({code})
+        </option>
+      ))}
+    </select>
+  );
+};
+export default CurrencySelector;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/ProductForm.jsx
+================================================================================
+
+// src/components/PriceCalculator/ProductForm.jsx
+import React from 'react';
+import { Plus } from 'lucide-react';
+import { CURRENCY_CONFIG } from './constants';
+
+const ProductForm = ({ form, onFormChange, onSubmit, selectedCurrency }) => {
+  return (
+    <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input
+        type="text"
+        placeholder="Nome do produto"
+        value={form.name}
+        onChange={e => onFormChange({...form, name: e.target.value})}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-blue-200/70"
+      />
+      <select
+        value={form.priceType}
+        onChange={e => onFormChange({...form, priceType: e.target.value})}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white"
+      >
+        <option value="total" className="bg-blue-900">Preço Total</option>
+        <option value="unit" className="bg-blue-900">Preço Unitário</option>
+      </select>
+      <input
+        type="number"
+        placeholder={`Preço (${CURRENCY_CONFIG[selectedCurrency].symbol})`}
+        value={form.price}
+        onChange={e => onFormChange({...form, price: e.target.value})}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-blue-200/70"
+      />
+      <input
+        type="number"
+        placeholder="Quantidade"
+        value={form.quantity}
+        onChange={e => onFormChange({...form, quantity: e.target.value})}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-blue-200/70"
+      />
+      <button 
+        type="submit" 
+        className="col-span-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-3 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
+      >
+        <Plus className="w-5 h-5" />
+        Adicionar Produto
+      </button>
+    </form>
+  );
+};
+export default ProductForm;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/ProductList.jsx
+================================================================================
+
+// src/components/PriceCalculator/ProductList.jsx
+import React from 'react';
+import { Trash2 } from 'lucide-react';
+import { formatCurrency } from './utils';
+
+const ProductList = ({ products, onRemove, selectedCurrency }) => {
+  if (!products.length) return null;
+
+  return (
+    <div className="mt-6">
+      <h4 className="text-lg font-medium text-blue-200 mb-3">Produtos Cadastrados:</h4>
+      <div className="space-y-2">
+        {products.map((p, i) => (
+          <div key={i} className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
+            <span className="text-white">
+              {p.name} - {p.quantity} unidades a {formatCurrency(p.priceUnitario, selectedCurrency)}/un
+            </span>
+            <button
+              onClick={() => onRemove(i)}
+              className="text-red-400 hover:text-red-300 transition-colors"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+export default ProductList;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/CostForm.jsx
+================================================================================
+
+// src/components/PriceCalculator/CostForm.jsx
+import React from 'react';
+import { Plus } from 'lucide-react';
+import { CURRENCY_CONFIG } from './constants';
+
+const CostForm = ({ form, onFormChange, onSubmit, selectedCurrency }) => {
+  return (
+    <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input
+        type="text"
+        placeholder={CURRENCY_CONFIG[selectedCurrency].pt}
+        value={form.description}
+        onChange={e => onFormChange({...form, description: e.target.value})}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-blue-200/70"
+      />
+      <input
+        type="number"
+        placeholder={`Valor (${CURRENCY_CONFIG[selectedCurrency].symbol})`}
+        value={form.value}
+        onChange={e => onFormChange({...form, value: e.target.value})}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-blue-200/70"
+      />
+      <button 
+        type="submit" 
+        className="col-span-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-3 rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
+      >
+        <Plus className="w-5 h-5" />
+        Adicionar Custo
+      </button>
+    </form>
+  );
+};
+export default CostForm;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/CostList.jsx
+================================================================================
+
+// src/components/PriceCalculator/CostList.jsx
+import React from 'react';
+import { Trash2 } from 'lucide-react';
+import { formatCurrency } from './utils';
+
+const CostList = ({ costs, onRemove, selectedCurrency }) => {
+  if (!costs.length) return null;
+
+  return (
+    <div className="mt-6">
+      <h4 className="text-lg font-medium text-blue-200 mb-3">Custos Cadastrados:</h4>
+      <div className="space-y-2">
+        {costs.map((c, i) => (
+          <div key={i} className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
+            <span className="text-white">
+              {c.description}: {formatCurrency(c.value, selectedCurrency)}
+            </span>
+            <button
+              onClick={() => onRemove(i)}
+              className="text-red-400 hover:text-red-300 transition-colors"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+export default CostList;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/CalculationSection.jsx
+================================================================================
+
+// src/components/PriceCalculator/CalculationSection.jsx
+import React from 'react';
+import { Calculator } from 'lucide-react';
+
+const CalculationSection = ({ profitMargin, onProfitMarginChange, onCalculate, disabled }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input
+        type="number"
+        placeholder="Margem de Lucro (%)"
+        value={profitMargin}
+        onChange={e => onProfitMarginChange(e.target.value)}
+        className="p-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-blue-200/70"
+      />
+      <button
+        onClick={onCalculate}
+        disabled={disabled}
+        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        <Calculator className="w-5 h-5" />
+        Calcular Preços
+      </button>
+    </div>
+  );
+};
+export default CalculationSection;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/ResultsSection.jsx
+================================================================================
+
+// src/components/PriceCalculator/ResultsSection.jsx
+import React from 'react';
+import { formatCurrency } from './utils';
+import { CURRENCY_CONFIG } from './constants';
+
+const ResultsSection = ({ results, selectedCurrency }) => {
+  if (!results) return null;
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-medium text-blue-200">Resultados</h3>
+      
+      <div className="backdrop-blur-md bg-white/5 p-6 rounded-xl border border-white/10">
+        <div className="text-white">
+          <p className="text-xl font-medium text-blue-200 mb-3">Resumo Geral:</p>
+          <p className="text-lg">Custos Fixos Totais: {formatCurrency(results.custosFixos, selectedCurrency)}</p>
+          <p className="text-lg">Custo Total Produtos: {formatCurrency(results.custosProdutos, selectedCurrency)}</p>
+        </div>
+      </div>
+      
+      {results.detalhes.map((r, i) => (
+        <div key={i} className="backdrop-blur-md bg-white/5 p-6 rounded-xl border border-white/10 space-y-6">
+          <h4 className="text-xl font-medium text-blue-200">{r.produto}</h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2 text-white/90">
+              <p className="flex justify-between">
+                <span>Quantidade:</span>
+                <span className="font-medium">{r.quantidade} unidades</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Custo Unitário Base:</span>
+                <span className="font-medium">{formatCurrency(r.custoUnitarioBase, selectedCurrency)}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Custo Fixo por Unidade:</span>
+                <span className="font-medium">{formatCurrency(r.custoFixoPorUnidade, selectedCurrency)}</span>
+              </p>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg border border-white/10">
+              <p className="text-lg font-medium text-blue-200 mb-3">Abordagem por Custo Unitário</p>
+              <div className="space-y-2 text-white/90">
+                <p className="flex justify-between">
+                  <span>Preço de Venda:</span>
+                  <span className="font-medium">{formatCurrency(r.precoVendaSugerido1, selectedCurrency)}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>Total de Vendas:</span>
+                  <span className="font-medium">{formatCurrency(r.valorTotalVendas1, selectedCurrency)}</span>
+                </p>
+                <p className="flex justify-between text-emerald-300">
+                  <span>Lucro Esperado:</span>
+                  <span className="font-medium">{formatCurrency(r.lucroTotalEsperado1, selectedCurrency)}</span>
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-white/5 p-4 rounded-lg border border-white/10 md:col-span-2">
+              <p className="text-lg font-medium text-blue-200 mb-3">Abordagem por Custo Total</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white/90">
+                <p className="flex justify-between md:block">
+                  <span className="block mb-1">Preço de Venda:</span>
+                  <span className="font-medium">{formatCurrency(r.precoVendaSugerido2, selectedCurrency)}</span>
+                </p>
+                <p className="flex justify-between md:block">
+                  <span className="block mb-1">Total de Vendas:</span>
+                  <span className="font-medium">{formatCurrency(r.valorTotalVendas2, selectedCurrency)}</span>
+                </p>
+                <p className="flex justify-between md:block text-emerald-300">
+                  <span className="block mb-1">Lucro Esperado:</span>
+                  <span className="font-medium">{formatCurrency(r.lucroTotalEsperado2, selectedCurrency)}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+export default ResultsSection;
+
+================================================================================
+Arquivo: ./nostress/src/components/PriceCalculator/index.jsx
+================================================================================
+
+// src/components/PriceCalculator/index.jsx
+import React, { useState } from 'react';
+import CurrencySelector from './CurrencySelector';
+import ProductForm from './ProductForm';
+import ProductList from './ProductList';
+import CostForm from './CostForm';
+import CostList from './CostList';
+import CalculationSection from './CalculationSection';
+import ResultsSection from './ResultsSection';
+import Navbar from '../../components/Navbar';
+
+const PriceCalculator = () => {
+  const [selectedCurrency, setSelectedCurrency] = useState('BRL');
+  const [products, setProducts] = useState([]);
+  const [costs, setCosts] = useState([]);
+  const [profitMargin, setProfitMargin] = useState('');
+  const [results, setResults] = useState(null);
+  const [showResults, setShowResults] = useState(false);
+  
+  const [productForm, setProductForm] = useState({
+    name: '',
+    priceType: 'total',
+    price: '',
+    quantity: ''
+  });
+  
+  const [costForm, setCostForm] = useState({
+    description: '',
+    value: ''
+  });
+
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    try {
+      const { name, priceType, price, quantity } = productForm;
+      
+      if (!name || !price || !quantity) {
+        alert('Por favor, preencha todos os campos do produto');
+        return;
+      }
+      
+      const numPrice = parseFloat(price);
+      const numQuantity = parseInt(quantity);
+      
+      if (isNaN(numPrice) || isNaN(numQuantity) || numPrice <= 0 || numQuantity <= 0) {
+        alert('Preços e quantidades devem ser números válidos maiores que zero!');
+        return;
+      }
+      
+      const newProduct = {
+        name,
+        priceType,
+        quantity: numQuantity,
+        priceUnitario: priceType === 'total' ? numPrice / numQuantity : numPrice,
+        custoTotal: priceType === 'total' ? numPrice : numPrice * numQuantity
+      };
+      
+      setProducts(prev => [...prev, newProduct]);
+      setProductForm({ name: '', priceType: 'total', price: '', quantity: '' });
+    } catch (error) {
+      console.error('Erro ao adicionar produto:', error);
+      alert('Ocorreu um erro ao adicionar o produto. Verifique os dados e tente novamente.');
+    }
+  };
+
+  const handleAddCost = (e) => {
+    e.preventDefault();
+    try {
+      const { description, value } = costForm;
+      
+      if (!description || !value) {
+        alert('Por favor, preencha todos os campos do custo');
+        return;
+      }
+      
+      const numValue = parseFloat(value);
+      if (isNaN(numValue) || numValue <= 0) {
+        alert('O valor deve ser um número válido maior que zero!');
+        return;
+      }
+      
+      setCosts(prev => [...prev, { description, value: numValue }]);
+      setCostForm({ description: '', value: '' });
+    } catch (error) {
+      console.error('Erro ao adicionar custo:', error);
+      alert('Ocorreu um erro ao adicionar o custo. Verifique os dados e tente novamente.');
+    }
+  };
+
+  const handleRemoveProduct = (index) => {
+    setProducts(products.filter((_, idx) => idx !== index));
+  };
+
+  const handleRemoveCost = (index) => {
+    setCosts(costs.filter((_, idx) => idx !== index));
+  };
+const calculatePrices = () => {
+  try {
+    if (!products.length) {
+      alert('Adicione pelo menos um produto!');
+      return;
+    }
+
+    const marginValue = parseFloat(profitMargin);
+    if (!profitMargin || isNaN(marginValue) || marginValue <= 0) {
+      alert('A margem de lucro deve ser um número válido maior que zero!');
+      return;
+    }
+    
+    const marginDecimal = marginValue / 100;
+    const totalCustosProdutos = products.reduce((sum, p) => sum + p.custoTotal, 0);
+    const totalCustosFixos = costs.reduce((sum, c) => sum + c.value, 0); // Pode ser 0 se não houver custos fixos
+    
+    const results = products.map(produto => {
+      const custoFixoPorUnidade = costs.length > 0 ? totalCustosFixos / produto.quantity : 0;
+      const custoTotalUnitario = produto.priceUnitario + custoFixoPorUnidade;
+      const precoVenda1 = custoTotalUnitario * (1 + marginDecimal);
+      
+      const custoTotal = produto.custoTotal + (costs.length > 0 ? totalCustosFixos : 0);
+      const precoVenda2 = (custoTotal / produto.quantity) * (1 + marginDecimal);
+      
+      return {
+        produto: produto.name,
+        quantidade: produto.quantity,
+        custoUnitarioBase: produto.priceUnitario,
+        custoFixoPorUnidade,
+        precoVendaSugerido1: precoVenda1,
+        valorTotalVendas1: precoVenda1 * produto.quantity,
+        lucroTotalEsperado1: (precoVenda1 * produto.quantity) - custoTotal,
+        precoVendaSugerido2: precoVenda2,
+        valorTotalVendas2: precoVenda2 * produto.quantity,
+        lucroTotalEsperado2: (precoVenda2 * produto.quantity) - custoTotal,
+        custoTotal
+      };
+    });
+    
+    setResults({
+      custosFixos: totalCustosFixos,
+      custosProdutos: totalCustosProdutos,
+      detalhes: results
+    });
+    setShowResults(true);
+  } catch (error) {
+    console.error('Erro ao calcular preços:', error);
+    alert('Ocorreu um erro ao calcular os preços. Verifique os dados e tente novamente.');
+  }
+};
+  
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-blue-900 text-white overflow-hidden">
+    	      
+      <Navbar />
+      <div className="max-w-4xl mx-auto space-y-6 mt-11">
+        <div className="backdrop-blur-lg bg-white/10 rounded-2xl shadow-xl overflow-hidden border border-white/20">
+          <div className="p-8">
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-200">
+                Sistema de Cálculo de Preço
+              </h1>
+              <CurrencySelector
+                selectedCurrency={selectedCurrency}
+                onCurrencyChange={setSelectedCurrency}
+              />
+            </div>
+
+            <div className="space-y-8">
+              <div className="backdrop-blur-md bg-white/5 p-6 rounded-xl border border-white/10">
+                <h3 className="text-xl font-medium text-blue-200 mb-4">Adicionar Produto</h3>
+                <ProductForm
+                  form={productForm}
+                  onFormChange={setProductForm}
+                  onSubmit={handleAddProduct}
+                  selectedCurrency={selectedCurrency}
+                />
+                <ProductList
+                  products={products}
+                  onRemove={handleRemoveProduct}
+                  selectedCurrency={selectedCurrency}
+                />
+              </div>
+
+              <div className="backdrop-blur-md bg-white/5 p-6 rounded-xl border border-white/10">
+                <h3 className="text-xl font-medium text-blue-200 mb-4">Adicionar Custo Fixo</h3>
+                <CostForm
+                  form={costForm}
+                  onFormChange={setCostForm}
+                  onSubmit={handleAddCost}
+                  selectedCurrency={selectedCurrency}
+                />
+                <CostList
+                  costs={costs}
+                  onRemove={handleRemoveCost}
+                  selectedCurrency={selectedCurrency}
+                />
+              </div>
+
+              <div className="backdrop-blur-md bg-white/5 p-6 rounded-xl border border-white/10">
+
+				<CalculationSection
+				  profitMargin={profitMargin}
+				  onProfitMarginChange={setProfitMargin}
+				  onCalculate={calculatePrices}
+				  disabled={!products.length} // Removida a dependência de costs.length
+				/>
+
+              </div>
+
+              {showResults && results && (
+                <ResultsSection
+                  results={results}
+                  selectedCurrency={selectedCurrency}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PriceCalculator;
+
+================================================================================
+Arquivo: ./nostress/src/pages/Landing.jsx
+================================================================================
+
+import React from 'react';
+import Navbar from '../components/Navbar';
+import HeroSection from '../components/HeroSection';
+import FeatureSection from '../components/FeatureSection';
+
+const NoStressLanding = () => {
+  const [scrollPosition, setScrollPosition] = React.useState(0);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-blue-900 text-white overflow-hidden">
+      {/* Grid Pattern */}
+      <div className="fixed inset-0 opacity-20">
+        <div 
+          className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f20_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f20_1px,transparent_1px)] bg-[size:24px_24px]"
+          style={{
+            transform: `translateY(${scrollPosition * 0.2}px)`
+          }}
+        />
+      </div>
+
+      <Navbar />
+      <HeroSection />
+      <FeatureSection />
+    </div>
+  );
+};
+
+export default NoStressLanding;
+
+================================================================================
+Arquivo: ./nostress/src/pages/NotFound.jsx
+================================================================================
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Home, Compass, CloudOff } from 'lucide-react';
+
+const NotFound = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-blue-900 text-white overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f20_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f20_1px,transparent_1px)] bg-[size:24px_24px]" />
+        
+        {/* Floating Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-float-delayed" />
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 max-w-2xl mx-auto text-center">
+        <div className="backdrop-blur-xl bg-white/10 p-8 rounded-2xl border border-white/20 shadow-2xl">
+          {/* 404 Icon */}
+          <div className="mb-8 relative">
+            <div className="absolute inset-0 animate-float">
+              <CloudOff className="mx-auto h-24 w-24 text-blue-400/50" />
+            </div>
+            <CloudOff className="mx-auto h-24 w-24 text-blue-400" />
+          </div>
+
+          {/* Title & Subtitle */}
+          <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-200">
+            Página Não Encontrada
+          </h1>
+          <p className="text-xl text-blue-200/80 mb-8">
+            Parece que você se perdeu no caminho. Não se preocupe, acontece com os melhores navegadores!
+          </p>
+
+          {/* Navigation Options */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/"
+              className="group flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 shadow-lg"
+            >
+              <Home className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+              <span>Voltar ao Início</span>
+            </Link>
+            
+            <button
+              onClick={() => window.history.back()}
+              className="group flex items-center justify-center gap-2 px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition-all duration-300 border border-white/20"
+            >
+              <Compass className="w-5 h-5 group-hover:-rotate-45 transition-transform duration-300" />
+              <span>Voltar</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Error Code */}
+        <div className="mt-8 font-mono text-lg text-blue-200/60 animate-pulse">
+          Erro 404
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NotFound;
+
